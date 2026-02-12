@@ -14,10 +14,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Terminal
 
 /**
- * Terminal panel content (Dynamic Plugin - Stub)
+ * Terminal panel fallback content.
  *
- * This is a placeholder implementation. The full functionality
- * requires host services that are not yet exposed through PluginContext.
+ * Shown when the Terminal Tab plugin is not installed or not yet loaded.
+ * The terminal panel requires the terminal-tab plugin to provide BossTerm
+ * functionality via TerminalTabPluginAPI.
  */
 @Composable
 fun TerminalContent() {
@@ -39,18 +40,18 @@ fun TerminalContent() {
                     modifier = Modifier.size(48.dp),
                     tint = MaterialTheme.colors.primary
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 Text(
                     text = "Terminal",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.onBackground
                 )
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 Card(
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(8.dp),
@@ -62,24 +63,24 @@ fun TerminalContent() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Dynamic Plugin Stub",
+                            text = "Terminal Tab Plugin Required",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colors.primary
                         )
-                        
+
                         Spacer(modifier = Modifier.height(8.dp))
-                        
+
                         Text(
-                            text = "This panel is loaded as a dynamic plugin.",
+                            text = "The Terminal Tab plugin provides terminal emulation.",
                             fontSize = 12.sp,
                             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                         )
-                        
+
                         Spacer(modifier = Modifier.height(4.dp))
-                        
+
                         Text(
-                            text = "Full functionality pending PluginContext expansion.",
+                            text = "Install it from the Plugin Manager to enable this panel.",
                             fontSize = 12.sp,
                             color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
                         )

@@ -5,8 +5,9 @@ import ai.rever.boss.plugin.api.LocalWindowProjectStateProvider
 import ai.rever.boss.plugin.api.PanelComponentWithUI
 import ai.rever.boss.plugin.api.PanelEventProvider
 import ai.rever.boss.plugin.api.PanelInfo
+import ai.rever.boss.plugin.api.PluginContext
 import ai.rever.boss.plugin.api.SettingsProvider
-import ai.rever.boss.plugin.api.TerminalContentProvider
+import ai.rever.boss.plugin.api.TerminalTabPluginAPI
 import androidx.compose.runtime.Composable
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.Lifecycle.Callbacks
@@ -19,12 +20,13 @@ import kotlinx.coroutines.launch
 /**
  * Terminal panel component (Dynamic Plugin)
  *
- * Uses TerminalContentProvider from host for full terminal functionality.
+ * Uses TerminalTabPluginAPI from the terminal-tab plugin for full terminal functionality.
+ * Gets the API via getPluginAPI() rather than using TerminalContentProvider from the host.
  */
 class TerminalComponent(
     ctx: ComponentContext,
     override val panelInfo: PanelInfo,
-    private val terminalContentProvider: TerminalContentProvider?,
+    private val pluginContext: PluginContext,
     private val panelEventProvider: PanelEventProvider?,
     private val settingsProvider: SettingsProvider?
 ) : PanelComponentWithUI, ComponentContext by ctx {
@@ -45,18 +47,21 @@ class TerminalComponent(
      * Called when user clicks Reset in the panel's more menu.
      */
     override fun onBeforeReset() {
-        terminalContentProvider?.resetTerminals()
+        val terminalApi = pluginContext.getPluginAPI(TerminalTabPluginAPI::class.java)
+        terminalApi?.resetAllTerminals()
     }
 
     @Composable
     override fun Content() {
-        if (terminalContentProvider != null && panelEventProvider != null && settingsProvider != null) {
+        val terminalApi = pluginContext.getPluginAPI(TerminalTabPluginAPI::class.java)
+
+        if (terminalApi != null && panelEventProvider != null && settingsProvider != null) {
             val windowIdProvider = LocalWindowIdProvider.current
             val windowProjectStateProvider = LocalWindowProjectStateProvider.current
             val windowId = windowIdProvider?.getWindowId()
             val projectPath = windowProjectStateProvider?.getSelectedProjectPath() ?: ""
 
-            terminalContentProvider.TabbedTerminalContent(
+            terminalApi.TabbedTerminalContent(
                 workingDirectory = projectPath.ifEmpty { null },
                 onExit = {
                     windowId?.let { wid ->
@@ -70,7 +75,7 @@ class TerminalComponent(
                 }
             )
         } else {
-            // Fallback stub content when providers not available
+            // Fallback stub content when API not available
             TerminalContent()
         }
     }

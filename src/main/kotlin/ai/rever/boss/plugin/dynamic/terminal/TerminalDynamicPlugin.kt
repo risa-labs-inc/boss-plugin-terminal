@@ -2,29 +2,30 @@ package ai.rever.boss.plugin.dynamic.terminal
 
 import ai.rever.boss.plugin.api.DynamicPlugin
 import ai.rever.boss.plugin.api.PluginContext
+import ai.rever.boss.plugin.api.TerminalTabPluginAPI
 
 /**
  * Terminal dynamic plugin - Loaded from external JAR.
  *
- * Integrated terminal emulator using host terminal providers.
+ * Integrated terminal emulator using TerminalTabPluginAPI from the terminal-tab plugin.
+ * This plugin consumes the API registered by the terminal-tab plugin via getPluginAPI().
  */
 class TerminalDynamicPlugin : DynamicPlugin {
     override val pluginId: String = "ai.rever.boss.plugin.dynamic.terminal"
     override val displayName: String = "Terminal (Dynamic)"
-    override val version: String = "1.0.3"
+    override val version: String = "1.0.4"
     override val description: String = "Integrated terminal emulator"
     override val author: String = "Risa Labs"
     override val url: String = "https://github.com/risa-labs-inc/boss-plugin-terminal"
 
     override fun register(context: PluginContext) {
-        val terminalContentProvider = context.terminalContentProvider
         val panelEventProvider = context.panelEventProvider
         val settingsProvider = context.settingsProvider
 
-        if (terminalContentProvider == null || panelEventProvider == null || settingsProvider == null) {
+        if (panelEventProvider == null || settingsProvider == null) {
             // Providers not available - register stub
             context.panelRegistry.registerPanel(TerminalInfo) { ctx, panelInfo ->
-                TerminalComponent(ctx, panelInfo, null, null, null)
+                TerminalComponent(ctx, panelInfo, context, null, null)
             }
             return
         }
@@ -33,7 +34,7 @@ class TerminalDynamicPlugin : DynamicPlugin {
             TerminalComponent(
                 ctx = ctx,
                 panelInfo = panelInfo,
-                terminalContentProvider = terminalContentProvider,
+                pluginContext = context,
                 panelEventProvider = panelEventProvider,
                 settingsProvider = settingsProvider
             )
