@@ -25,4 +25,6 @@ host services to be exposed through PluginContext.
 
 ## License
 
-Proprietary - Risa Labs Inc.
+Licensed under the [Apache License, Version 2.0](LICENSE).
+
+Copyright 2025-2026 Risa Labs Inc.
